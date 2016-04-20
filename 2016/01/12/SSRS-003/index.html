@@ -1,0 +1,353 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>蛋疼集锦 | Coffee Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="邵辰">
+    
+    <meta name="description" content="打印项目初期接到一个需求，要添加一个按钮，勾选record实现批量打印功能。由于网络的特殊配置，只能在Plugin中实现这个功能，而不能在DataBroker中实现，DataBroker是公司比较强大的一个平台，可以自定义feature并可热插拔，在这里可以理解成REST API。Plugin中又有">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Coffee Time" title="Coffee Time"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Coffee Time">Coffee Time</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:sherlockshao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/12/SSRS-003/" title="蛋疼集锦" itemprop="url">蛋疼集锦</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sherlockshao.github.io" title="邵辰">邵辰</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-01-12T01:27:40.000Z" itemprop="datePublished">2016-01-12</time>
+    更新日期:<time datetime="2016-04-20T05:53:02.205Z" itemprop="dateModified">2016-04-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u6253_u5370"><span class="toc-number">1.</span> <span class="toc-text">打印</span></a></li></ol>
+		</div>
+		
+		<h3 id="u6253_u5370"><a href="#u6253_u5370" class="headerlink" title="打印"></a>打印</h3><p>项目初期接到一个需求，要添加一个按钮，勾选record实现批量打印功能。由于网络的特殊配置，只能在Plugin中实现这个功能，而不能在DataBroker中实现，DataBroker是公司比较强大的一个平台，可以自定义feature并可热插拔，在这里可以理解成REST API。Plugin中又有限制，不能引用custom assemblies，就意味着必须使用源码来实现打印功能。于是开始了上网搜索阶段，刚开始找到一个简单的方法，代码如下   </p>
+<pre><code>Process p = new Process( );
+p.StartInfo = new ProcessStartInfo( )
+{
+    CreateNoWindow = true,
+    Verb = &quot;print&quot;,
+    FileName = path //put the correct path here
+};
+p.Start( );
+</code></pre><p>但是必须要安装Adobe Reader，并且一个打开的PDF页面，总之不好用，pass掉。<br>接下来的发展并不顺利，并没有找到可以打印PDF的源码，只查到了些第三方的API，而且都是要花钱的，让我意识到这条路并不好走。在研究时发现了PrintDocument类，可以直接调用打印机打印。后来灵机一动，想到了调用ssrs之后返回图片而不是PDF，然后通过API分页打印图片，真是柳暗花明又一村。贴一下代码：              </p>
+<pre><code>Image gif = Image.FromFile(file);
+FrameDimension fd = new FrameDimension(gif.FrameDimensionsList[0]);
+int pageCount = gif.GetFrameCount(fd);
+int currentPage = 0;
+int nextpage;
+if (pageCount &lt; 1)
+{
+    return;
+}
+pd.PrintPage += (sender, e) =&gt;
+{
+    if (currentPage &lt; pageCount)
+    {
+        gif.SelectActiveFrame(fd, currentPage);
+        int width = gif.Width;
+        int height = gif.Height;
+        System.Drawing.Rectangle destRect = new System.Drawing.Rectangle(0, 0, width, height);
+        e.Graphics.DrawImage(gif, destRect);
+        nextpage = currentPage + 1;
+        if (nextpage &lt; pageCount)
+        {
+            currentPage = nextpage;
+            e.HasMorePages = true;
+        }
+        else
+        {
+            e.HasMorePages = false;
+        }
+    }
+};
+pd.EndPrint += (sender, e) =&gt;
+{
+    gif.Dispose();
+};
+pd.Print();
+//gif.Dispose();
+</code></pre><p>pd就是PrintDocument的一个实例，赋值很简单，终于可以连上打印机进行打印了，只要公司有一台网络打印机。但后来又发现了其他问题，可能是图片的像素和PDF的像素不同，打出来的图片和PDF有点小的差别，有的在PDF中可以显示下的内容在图片中却不行，遇到这种就需要手动调整PDF和图片，让他们尽量保持一致。<br>这时候突然来了个消息，由于客户特殊的网络配置，CRM机器连不上打印机，就意味着这个功能要废弃了，这段时间的研究没能排上用场，有点失望，还好不用再调蛋疼的图片了，算是一个安慰。最终实现成点击打印按钮，生成出一份PDF文件来，多个letter的PDF会merge到一起生成。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CRM/">CRM</a><a href="/tags/SSRS/">SSRS</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sherlockshao.github.io/2016/01/12/SSRS-003/" data-title="蛋疼集锦 | Coffee Time" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/04/20/essay-001/" title="随笔">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  随笔</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/06/SSRS-002/"  title="控件使用">
+ <strong>NEXT:</strong><br/> 
+ <span>控件使用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u6253_u5370"><span class="toc-number">1.</span> <span class="toc-text">打印</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/CRM/" title="CRM">CRM<sup>4</sup></a></li>
+		
+			<li><a href="/tags/SSRS/" title="SSRS">SSRS<sup>4</sup></a></li>
+		
+			<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+		
+			<li><a href="/tags/随笔/" title="随笔">随笔<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="null" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://sherlockshao.github.io" target="_blank" title="邵辰">邵辰</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

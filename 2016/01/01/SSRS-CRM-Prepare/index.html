@@ -1,0 +1,320 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>准备 | Coffee Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="邵辰">
+    
+    <meta name="description" content="序忙的时候很忙，闲的时候很懒，去年搭的博客系统现在才开始写。于OPG开发项目末期，很多坑填完没做记录很可能就忘了，落下的地方想起来会及时补充，如有人读欢迎补充与讨论。
+基本概念
+rdl 和 rdlcReport文件分 rdl 和 rdlc 两种，实际上两种文件都是xml结构，不同之处在于rdlc是本">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Coffee Time" title="Coffee Time"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Coffee Time">Coffee Time</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:sherlockshao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/01/SSRS-CRM-Prepare/" title="准备" itemprop="url">准备</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sherlockshao.github.io" title="邵辰">邵辰</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-01-01T00:50:36.000Z" itemprop="datePublished">2016-01-01</time>
+    更新日期:<time datetime="2016-01-04T03:41:49.557Z" itemprop="dateModified">2016-01-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#u5E8F"><span class="toc-number">1.</span> <span class="toc-text">序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u57FA_u672C_u6982_u5FF5"><span class="toc-number">2.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u73AF_u5883_u51C6_u5907"><span class="toc-number">3.</span> <span class="toc-text">环境准备</span></a></li></ol>
+		</div>
+		
+		<h2 id="u5E8F"><a href="#u5E8F" class="headerlink" title="序"></a>序</h2><p>忙的时候很忙，闲的时候很懒，去年搭的博客系统现在才开始写。于OPG开发项目末期，很多坑填完没做记录很可能就忘了，落下的地方想起来会及时补充，如有人读欢迎补充与讨论。</p>
+<h2 id="u57FA_u672C_u6982_u5FF5"><a href="#u57FA_u672C_u6982_u5FF5" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li><strong>rdl 和 rdlc</strong><br>Report文件分 rdl 和 rdlc 两种，实际上两种文件都是xml结构，不同之处在于rdlc是本地运行的report文件，不可以添加在web工程下，而rdl是部署到服务端运行的，依赖Report Service。<br>显然CRM中的Report使用的是rdl。</li>
+<li><strong>data source</strong><br>rdlc的data source可以是自定义的对象，而rdl是在服务端运行的，所以无法自定义对象。<br>一个report文件中不可以定义不同类型的data source。<br>我选择使用Microsoft Dynamics CRM Fetch,原因有二<br>1.CRM Online中report的data source类型只能是Fetch，便于迁移。<br>2.CRM中Fetch查询可以理解成SQL查询的API，可以通过Advance Find下载想要的查询语句。  </li>
+<li><strong>datasets</strong><br>一个report文件中可以添加多个dataset，如果没有这一点我可能放弃使用rdl。因为据说fetch xml只能查询10个link-entity，虽然实际开发时还没遇到过因为这个原因报错的情况，但如果只有一个dataset,发生这种情况就没有回头路了，还好前方的路是能走通的。</li>
+</ul>
+<h2 id="u73AF_u5883_u51C6_u5907"><a href="#u73AF_u5883_u51C6_u5907" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
+<li>我最开始是打算在visual studio 2013中开发。想要创建rdl类型的工程需要安装 <a href="http://www.microsoft.com/en-us/download/details.aspx?id=42313" target="_blank" rel="external">business intelligence development studio 2013</a>, 安装之后发现date source type没有Microsoft Dynamics CRM Fetch，想要有这个type需要安装 BIDS Extension 这里是 <a href="https://www.microsoft.com/en-us/download/details.aspx?id=45013" target="_blank" rel="external">2015 下载地址</a>,安装是发现，需要先安装Report Service，我的Report Service并没有装在VS的开发环境中，所以放弃了在这里开发。</li>
+<li>在安装Report Service的机器上开发。在这又有两种方式可以进行report开发<br>a. 在安装Sql Server过程中有一个feature叫Business Intelligence Development Studio，可以一用<br>b. 直接使用SQL Server Data Tool<br>在我的环境中有SQL Server Data Tool，所以我选择在SQL Server Data Tool 中进行开发。  </li>
+<li>如果CRM Server和Report Server装在不同机器上，大部分环境都是这样的，可能会出现如下错误：<br><code>Microsoft.Reporting.WebForms.ReportServerException: Query execution failed for dataset &#39;DSMain&#39;. (rsErrorExecutingCommand)</code><br><code>Cause: The query will be looking for a HTTP SPN(Service Principal Names) that does not exist by default.</code><br>需要设置spn <code>setspn -a HTTP/crmservername crmsiteAccount</code>,<br>例如 <code>setspn -a HTTP/win-bm4p2r955e6 opgdev\dev13_appplication</code><br>原因：用户凭证从一台服务器传递到另一个台服务器,这个过程叫Kerberos委派，当用户运行了在CRM中的SSRS的报表时，我们必须验证CRM，然后将请求发送到SSRS服务器，所以需要正确的spn设置。</li>
+<li>引用 C:\Program Files\Microsoft SQL Server\MSRS11.MSSQLSERVER\Reporting Services\ReportServer\bin\Microsoft.Crm.Reporting.RdlHelper.dll<br>这个是我早期开发时记录的一点，现在发现report可以不引用这个dll,就目前我所知这个assembly里面包含一些api，比如时间转换等等。在实际开发中发现使用VB自带的API可以实现这些功能，而且网上的相关介绍会更多些。</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CRM/">CRM</a><a href="/tags/SSRS/">SSRS</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sherlockshao.github.io/2016/01/01/SSRS-CRM-Prepare/" data-title="准备 | Coffee Time" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/04/SSRS-001/" title="基本设置与介绍">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  基本设置与介绍</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/28/for-test/"  title="for test">
+ <strong>NEXT:</strong><br/> 
+ <span>for test
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#u5E8F"><span class="toc-number">1.</span> <span class="toc-text">序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u57FA_u672C_u6982_u5FF5"><span class="toc-number">2.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#u73AF_u5883_u51C6_u5907"><span class="toc-number">3.</span> <span class="toc-text">环境准备</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/CRM/" title="CRM">CRM<sup>4</sup></a></li>
+		
+			<li><a href="/tags/SSRS/" title="SSRS">SSRS<sup>4</sup></a></li>
+		
+			<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+		
+			<li><a href="/tags/随笔/" title="随笔">随笔<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="null" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://sherlockshao.github.io" target="_blank" title="邵辰">邵辰</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

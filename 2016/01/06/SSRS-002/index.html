@@ -1,0 +1,335 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>控件使用 | Coffee Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="邵辰">
+    
+    <meta name="description" content="点开Toolbox里面有许多控件，控件可以直接拖拽到Report中使用，但是定位控件的位置要用Location属性，手动拖拽找不准位置容易把布局整乱了。介绍下项目中使用的控件。
+Text Box
+Allow height to increase 和 Allow height to decrease属">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Coffee Time" title="Coffee Time"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Coffee Time">Coffee Time</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:sherlockshao.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/06/SSRS-002/" title="控件使用" itemprop="url">控件使用</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://sherlockshao.github.io" title="邵辰">邵辰</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-01-06T03:07:35.000Z" itemprop="datePublished">2016-01-06</time>
+    更新日期:<time datetime="2016-04-20T05:52:49.671Z" itemprop="dateModified">2016-04-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Text_Box"><span class="toc-number">1.</span> <span class="toc-text">Text Box</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rectangle"><span class="toc-number">2.</span> <span class="toc-text">Rectangle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List_uFF0CTable_u548CMatrix"><span class="toc-number">3.</span> <span class="toc-text">List，Table和Matrix</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SubReport"><span class="toc-number">4.</span> <span class="toc-text">SubReport</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chart"><span class="toc-number">5.</span> <span class="toc-text">Chart</span></a></li></ol>
+		</div>
+		
+		<p>点开Toolbox里面有许多控件，控件可以直接拖拽到Report中使用，但是定位控件的位置要用Location属性，手动拖拽找不准位置容易把布局整乱了。介绍下项目中使用的控件。</p>
+<h3 id="Text_Box"><a href="#Text_Box" class="headerlink" title="Text Box"></a>Text Box</h3><ul>
+<li>Allow height to increase 和 Allow height to decrease属性<br>Allow height to increase默认值是True，Allow height to decrease默认值是false，个人觉得这两个值没有修改的必要，用的时候自然会体会，不用解释。<br>举个例子，Tb1的Location top为10pt，height为10pt，下面有个Tb2，top为25pt也就是距离Tb1有5pt。如果Tb1中实际内容高度占了100pt,那么在report中Tb2将被定位在115pt中开始，就是距离5pt保持不变；而如果Tb2定义的top小于20，比如19pt，这是tb1和tb2有重合的部分，在生成report时，即使Tb1实际大小有100pt,Tb2还是会从19pt开始。所有控件都符合这个原则。<br>我在开发时会尽量保证TextBox高度和实际文字大小的高度差不多大或只小一点，这样显得整洁，一目了然。</li>
+<li><code>&lt;KeepTogether&gt;</code><br>这个节点属性在design模式下找不到，f7进入xml文件会找到这个节点，默认值是True，SSRS会尽量保证TextBox中内容在一页显示。<br>遇到过一次TextBox中内容刚好接近PDF的一页，按需求是要在前一页的中间开始，在下一页的中间位置截止。但因为这个属性的关系，在PDF中发现前一页出现一大段空白，内容完整的显示在了后一页上。如遇到类似的情况需要注意。</li>
+<li><code>&lt;HangingIndent&gt;</code>和<code>&lt;LeftIndent&gt;</code><br>这两个节点也是只有在编辑xml的时候才会发现，位于<code>&lt;Paragraph&gt;</code>下层，和<code>&lt;TextRuns&gt;</code>同层。有的report需要导出成像word那样有段落有缩进，单单使用空格可能不准，这时可以考虑这设置这两个节点的值。 <code>&lt;HangingIndent&gt;</code> <a href="https://msdn.microsoft.com/zh-cn/library/microsoft.reportingservices.ondemandreportrendering.paragraph.hangingindent(v=sql.120).aspx" target="_blank" rel="external">来控制首段缩进</a>。<code>&lt;LeftIndent&gt;</code> <a href="https://technet.microsoft.com/en-us/library/microsoft.reportingservices.rdlobjectmodel.paragraph.leftindent(v=sql.105).aspx" target="_blank" rel="external">可以控制内容距离左边的距离</a>。</li>
+<li>Markup type<br>选中TextBox中指定的文字内容，右键点Text Properties，会发现Markup type这个选项，默认是None，会按照设计的内容显示。还有个选项是HTML，选中这个，SSRS就可以解析选中文字中的HTML标签，一些不识别的标签中的内容，并不会乱显示，而是按照默认的文字格式显示，标签也不会显示。关于官方的介绍和显示可以参见<a href="https://msdn.microsoft.com/zh-cn/library/cc645967.aspx" target="_blank" rel="external">这里</a>，虽然不是很完美，但一些简单的需求还是够用了。</li>
+<li>Action<br>选中一段文字，Text Properties中有个Action选项，默认是None。其它选项里面项目中我只是用过Go to URL，选中文字便会变成链接的形式，可以跳转到指定的URL，在PDF中同样生效。</li>
+</ul>
+<h3 id="Rectangle"><a href="#Rectangle" class="headerlink" title="Rectangle"></a>Rectangle</h3><p>矩形区域，一些有关联的控件可以放到一个矩形内。比如某一页的内容可以放到一个大矩形内，通过Add Page Breake Before或After来控制分页。说到<strong>分页</strong>，一共有两种形式，拿导出PDF举例，一种是设置Page Breake属性来手动设定具体的分页位置；另一种是内容在PDF中撑满了一页，这时会自动分页。<br>还有个设置，叫做”<strong>Keep contents together on a single page, if possible</strong>“，看到这名字就知道含义，默认值是true。有时候需要根据情况修改这个值。对于这个属性的利用，之后会举具体例子来说明。<br><strong>Visibility属性</strong>，这个属性适用于大部分控件，放在Rectangle里是因为对Rectangle的这个属性设置的比较多。有三个值，默认是Show，还有hidden和表达式。介绍下后两者的区别，表达式：返回true则隐藏，false则显示，隐藏时控件不会有占位，下边的元素会自动填充这个地方；hidden:如果勾选，那么控件隐藏但是会有占位，report展示时会有空出这部分。就好比css中<code>display:none</code>和<code>visibility:hidden</code>的区别。<br><strong>PageName属性</strong>，这个属性在可以设置PageBreak的控件中都有，选中控件，f4在properties框中可以设置。如果report导出成excel，那么设置的分页后每一页会显示在不同的sheet中，而pagename就是sheet的name。</p>
+<h3 id="List_uFF0CTable_u548CMatrix"><a href="#List_uFF0CTable_u548CMatrix" class="headerlink" title="List，Table和Matrix"></a>List，Table和Matrix</h3><p>这三个控件算是核心控件，很多报表都是以表格的形式展现的，就需要使用这种控件。这三个控件用法类似，因为它们都有一个共同的概念就是Groups。<br>List相当于一个Row Group，Table相当于一个Row Group + Header。完全可以在List上insert row然后选Outside Group - Above，达到和Table同样的效果。Matrix相当于Row Groups + Column Groups。可以对Group添加Parent Group或Child Group但同级的Group只能有一个。以下对这三个控件我统称Table。  </p>
+<hr>
+<p>关于<strong>Groups</strong>，<a href="https://msdn.microsoft.com/en-us/library/dd255263.aspx" target="_blank" rel="external">这里</a>是官方介绍，这个我也没细看，说下我的简单理解。首先要对Table设置唯一的DataSet，很容易理解，接下来给Row Group中的单元格TextBox赋值，可以直接赋成某一Field的值，这时点击Group Properties，在General中Group expression并没有内容，点击Add按钮，可以添加expression设置以什么内容来分组，如果不设置会按照dataset中的数据个数来显示。举个例子，Entity B lookup Entity A，假设a这个record和5个b关联，在查询这个a时会查出5条数据，Group中若果显示b1这个field的值，如果没设置Group expression，就会显示出5行；如果b1是个optionset只有两种值，group on expression设置成b1的值，那么只会显示成2行。在项目中很少有把Table的group on expression设置成很复杂的情况，在Chart中却很常见。<br>另外还有一个问题如果Group的某个单元里又套了一个Table，那么必须设group on expression，否则会报错。所以通常我会把<strong>group on expression设置成Entity主键的值</strong>，避免重复，又能清楚的感受到目前group所要显示的内容。<br>还有一个有趣的设置，当Table中内容太多需要显示在多页时，可以在每一页都重复Table的Header。在最下方的Groupm面板里有个下拉三角，点开选择Advanced Mode，发现Row Groups下出现很多Static框，分别对应每个单元格，选中对应header中的一个Static框，f4属性框里会找到RepeatOnNewPage，选择默认false改成true就行。有时还需要强制在table中第几行换行，在Row Groups下的找到对应Group那行的框，f4属性中-&gt;Group-&gt;PageBreak可以设置Disable属相来控制哪一行可以换行。附一张图方便找到设置。<br><img src="/images/Groups_160118.PNG" alt=""></p>
+<h3 id="SubReport"><a href="#SubReport" class="headerlink" title="SubReport"></a>SubReport</h3><p>个人理解，subreport就是把主report中重复的内容提取出来，不用每次都重复的写内容，直接引用subreport就行。SubReport就是一个独立的report文件，主report在使用时，拖入subreport控件，在subreport properties中选择要引用的subreport名字就行。<br>向subreport中传递参数，在subreport中添加参数，比如CRM_P1，主report的subreport控件的subreport properties中找到parameter，点Add，需要添加和定义好的同名的参数也要叫CRM_P1。</p>
+<h3 id="Chart"><a href="#Chart" class="headerlink" title="Chart"></a>Chart</h3><p>本来是想总结下，发现网上的介绍足够详细，参见<a href="https://msdn.microsoft.com/en-us/library/dd239351.aspx" target="_blank" rel="external">这里</a>。简单补充点项目中使用过的东西。   </p>
+<ol>
+<li>同时显示Column chart和line chart，横轴月份，line chart值是上个月和这个月的累加。先创建column chart，然后在chart data values处点击加号按钮，选择指定field，比如我选择ApplicantId，这时会多处一个chart，change chart type，把新添加的chart改成line chart，修改values的显示。这个需求比较特殊，所以我考虑用Code来实现  </li>
+</ol>
+<pre><code>Public LPACumulativeCountForMatrix As Integer
+Public Function OperatorLPACumulativeCountForMatrix(ByVal count As Integer) as String
+LPACumulativeCountForMatrix =count + LPACumulativeCountForMatrix
+Return LPACumulativeCountForMatrix .ToString()
+End Function
+</code></pre><p>思路就是定义一个变量LPACumulativeCountForMatrix，然后每次累加。<br>Value处填写表达式 <code>=Code.OperatorLPACumulativeCountForChart(Count(Fields!ApplacationId.Value))</code>  </p>
+<ol>
+<li>Pie Chart如果Category内容太多，会出现重叠，要尽量避免这种情况，要使用3D效果。还有比如Label的表达式，Lable的位置，可以看<a href="https://crmchartguy.wordpress.com/2014/03/13/all-things-pie-chart-in-dynamics-crm/" target="_blank" rel="external">这里</a>，介绍的很详细。CRM Dashboard中的chart里的一些设置页可以通用。在crm中，导出chart，修改xml文件，再导入就行。  </li>
+<li>纵坐的值ssrs会自动显示，比如统计个数，可能会显示100,200,300等多了就会1000,1500,2000之类的自动变化，如果值很少，有时会显示成0.5,1,1.5,2之类带小数的情况，这种情况在实际使用时可能出现概率不大，但在qa测试时是没法通过的。这时需要这样做，这只Category Group的Name叫”Chart1_CategoryGroup”，然后修改纵坐标的Interval，把表达式改成 <code>=IIf(Max(CountRows(&quot;Chart1_SeriesGroup&quot;)) &lt;= 5, 1, 0)</code>，意思是某一列总数小于等于5时，间隔是1，大于5时自动间隔。根据实际情况来设置。</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CRM/">CRM</a><a href="/tags/SSRS/">SSRS</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://sherlockshao.github.io/2016/01/06/SSRS-002/" data-title="控件使用 | Coffee Time" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/12/SSRS-003/" title="蛋疼集锦">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  蛋疼集锦</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/04/SSRS-001/"  title="基本设置与介绍">
+ <strong>NEXT:</strong><br/> 
+ <span>基本设置与介绍
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Text_Box"><span class="toc-number">1.</span> <span class="toc-text">Text Box</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rectangle"><span class="toc-number">2.</span> <span class="toc-text">Rectangle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List_uFF0CTable_u548CMatrix"><span class="toc-number">3.</span> <span class="toc-text">List，Table和Matrix</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SubReport"><span class="toc-number">4.</span> <span class="toc-text">SubReport</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chart"><span class="toc-number">5.</span> <span class="toc-text">Chart</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/CRM/" title="CRM">CRM<sup>4</sup></a></li>
+		
+			<li><a href="/tags/SSRS/" title="SSRS">SSRS<sup>4</sup></a></li>
+		
+			<li><a href="/tags/test/" title="test">test<sup>1</sup></a></li>
+		
+			<li><a href="/tags/随笔/" title="随笔">随笔<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="null" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://sherlockshao.github.io" target="_blank" title="邵辰">邵辰</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
