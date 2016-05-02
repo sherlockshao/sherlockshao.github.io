@@ -73,7 +73,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-04-20T06:10:12.000Z" itemprop="datePublished">2016-04-20</time>
-    更新日期:<time datetime="2016-04-20T07:58:37.878Z" itemprop="dateModified">2016-04-20</time>
+    更新日期:<time datetime="2016-05-02T00:46:12.905Z" itemprop="dateModified">2016-05-02</time>
     
   </p>
 </header>
@@ -82,10 +82,11 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目錄</strong>
-		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><span class="toc-number">1.</span> <span class="toc-text">解决本主题 pacman 中 Code标签现实问题</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><span class="toc-number">1.</span> <span class="toc-text">解决本主题 pacman 中 Code标签现实问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u73B0_u72B6"><span class="toc-number">2.</span> <span class="toc-text">现状</span></a></li></ol>
 		</div>
 		
 		<h3 id="u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><a href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898" class="headerlink" title="解决本主题 pacman 中 Code标签现实问题"></a>解决本主题 pacman 中 Code标签现实问题</h3><p>前几篇文章中有引用大段代码的地方，发现在markdown preview的时候可以完美的显示代码片段框，但是在html中却不起效。只显示一行代码的地方没有问题。这一点有点不能忍。<br>在调试页面时发现 <code>&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</code>的结构没有问题。因为code标签是html5引入的新标签，起初怀疑主题没有引入html5的dtd文件。上网一艘才发现html5的定义相当简便 <code>&lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;/html&gt;</code>不需要引入任何定义，有点眼前一亮的感觉。再检查网页，也没有问题。那为什么有的网页可以把引入的代码片段框起来呢？其实很简单，在调试其他可以显示代码片段的页面发现，都是通过自定义样式来显示的。于是修改主题中的 .styl文件，给 pre标签加上background-color和border属性，终于达到了想要的效果。<br>在github上发现有人提了类似的<a href="https://github.com/A-limon/pacman/issues/46" target="_blank" rel="external">issue</a>，因为我的改法比较粗暴，不能pullrequest。暂时能满足自己的使用。</p>
+<h3 id="u73B0_u72B6"><a href="#u73B0_u72B6" class="headerlink" title="现状"></a>现状</h3><p>从2014年12月份开始进入到OPG项目，去长春出差了近一个月，学习CRM相关的技术。我想对于大部分程序员来说，学习并运用新技术是一件比较兴奋的事，并且还能拿到出差补助感觉还不错。回大连之后没多久便让我研究Report相关的问题，也就有了我前几篇SSRS的总结。Report的开发过程也有很多坑，很多时候需要想办法绕过去，有的地方看似简单，实际上需要动很多脑筋，再加上客户的需求有时候会变，对于项目中的report开发起来比较费事，那段时间几乎周六都来加班，晚上也有加班但是次数不算多。<br>对于晚上加班我是有点抵触的，不像刚入职的时候，感觉能多学一会儿还有15元的加班费简直赚大了。现在除非是紧急的任务或者工作量很大我才会去加班，因为晚上加班的效率实在太低了，可能是因为老了，感觉晚上很难有白天那样的精力，万一写出了bug就不划算了，甚至觉得有的时候加班可以理解成白天该完成的工作没完成。所以我大多会选择周六加班，比较安静，比较自由。然而加班次数似乎也是公司绩效考核的一个标准，所以很多时候我觉得我已尽力，但绩效最多只能达到2.5分(2分是基础分)，我也没啥办法，也许大家都这样吧。<br>大概2015年年底项目一期开发基本完成，二期的Report任务也挺多，但迟迟没开始，到目前一直处于一期的维护阶段，客户问题并不多，大多数时间比较清闲。我觉得code能力和健身差不多，一段时间不加强锻炼就会有所下降，就要从更基础的地方从新起步。现在几乎每天都会做一些自重的锻炼，而代码却碰的有些少了，有时候想看些新技术但又觉得没有项目参与研究的肯定不深而且容易忘，就像之前看过nodejs，也没做记录现在几乎全忘了。。。 就记得几个名词中间件还有事件驱动。<br>想想我工作这几年的学习过程，大多还是通过工作驱动的，工作时用到什么就看看什么，遇到什么问题就上网查查，总感觉有很多东西还是吃不太准，没有搜索引擎自己干起活来都费劲。所以我觉得有必要再从头把一些基础知识捋一捋，这可能是我这段时间的任务了，希望有所收获。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -126,7 +127,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目錄</strong>
-  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><span class="toc-number">1.</span> <span class="toc-text">解决本主题 pacman 中 Code标签现实问题</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><span class="toc-number">1.</span> <span class="toc-text">解决本主题 pacman 中 Code标签现实问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u73B0_u72B6"><span class="toc-number">2.</span> <span class="toc-text">现状</span></a></li></ol>
   </div>
 
 <div id="asidepart">
