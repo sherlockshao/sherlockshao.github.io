@@ -4,12 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>随笔 | Coffee Time</title>
+    <title>WinDbg基本使用方法 | Coffee Time</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="邵辰">
     
-    <meta name="description" content="解决本主题 pacman 中 Code标签现实问题前几篇文章中有引用大段代码的地方，发现在markdown preview的时候可以完美的显示代码片段框，但是在html中却不起效。只显示一行代码的地方没有问题。这一点有点不能忍。在调试页面时发现 &amp;lt;pre&amp;gt;&amp;lt;code&amp;gt;&amp;lt;">
+    <meta name="description" content="前言由于工作分工，处理客户问题的经验很少，因为资源问题临时需要我来补这个坑。这也是我第一次查看客户dump文件，但是文件似乎有错误，这里主要介绍使用 Debug Diagnostic Tool 来分析和设置自动回收dump的schedule。
+基本操作
+下载地址
+设置symbol path: SRV">
     
     
     
@@ -65,15 +68,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/20/essay-001/" title="随笔" itemprop="url">随笔</a>
+      <a href="/2016/11/16/WinDbg/" title="WinDbg基本使用方法" itemprop="url">WinDbg基本使用方法</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://sherlockshao.github.io" title="邵辰">邵辰</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-20T06:10:12.000Z" itemprop="datePublished">2016-04-20</time>
-    Updated:<time datetime="2016-05-03T02:26:49.255Z" itemprop="dateModified">2016-05-03</time>
+    <time datetime="2016-11-16T02:35:44.000Z" itemprop="datePublished">2016-11-16</time>
+    Updated:<time datetime="2016-11-22T01:36:05.497Z" itemprop="dateModified">2016-11-22</time>
     
   </p>
 </header>
@@ -82,18 +85,29 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><span class="toc-number">1.</span> <span class="toc-text">解决本主题 pacman 中 Code标签现实问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u73B0_u72B6"><span class="toc-number">2.</span> <span class="toc-text">现状</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#u524D_u8A00"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u57FA_u672C_u64CD_u4F5C"><span class="toc-number"></span> <span class="toc-text">基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u6307_u4EE4__26amp_3B__u5177_u4F53Case"><span class="toc-number"></span> <span class="toc-text">指令  & 具体Case</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Debug_Diagnostic_Tool"><span class="toc-number"></span> <span class="toc-text">Debug Diagnostic Tool</span></a>
 		</div>
 		
-		<h3 id="u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><a href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898" class="headerlink" title="解决本主题 pacman 中 Code标签现实问题"></a>解决本主题 pacman 中 Code标签现实问题</h3><p>前几篇文章中有引用大段代码的地方，发现在markdown preview的时候可以完美的显示代码片段框，但是在html中却不起效。只显示一行代码的地方没有问题。这一点有点不能忍。<br>在调试页面时发现 <code>&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</code>的结构没有问题。因为code标签是html5引入的新标签，起初怀疑主题没有引入html5的dtd文件。上网一艘才发现html5的定义相当简便 <code>&lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;/html&gt;</code>不需要引入任何定义，有点眼前一亮的感觉。再检查网页，也没有问题。那为什么有的网页可以把引入的代码片段框起来呢？其实很简单，在调试其他可以显示代码片段的页面发现，都是通过自定义样式来显示的。于是修改主题中的 .styl文件，给 pre标签加上background-color和border属性，终于达到了想要的效果。<br>在github上发现有人提了类似的<a href="https://github.com/A-limon/pacman/issues/46" target="_blank" rel="external">issue</a>，因为我的改法比较粗暴，不能pullrequest。暂时能满足自己的使用。</p>
-<h3 id="u73B0_u72B6"><a href="#u73B0_u72B6" class="headerlink" title="现状"></a>现状</h3><p>从2014年12月份开始进入到OPG项目，去长春出差了近一个月，学习CRM相关的技术。我想对于大部分程序员来说，学习并运用新技术是一件比较兴奋的事，并且还能拿到出差补助感觉还不错。回大连之后没多久便让我研究Report相关的问题，也就有了我前几篇SSRS的总结。Report的开发过程也有很多坑，很多时候需要想办法绕过去，有的地方看似简单，实际上需要动很多脑筋，再加上客户的需求有时候会变，对于项目中的report开发起来比较费事，那段时间几乎周六都来加班，晚上也有加班但是次数不算多。<br>对于晚上加班我是有点抵触的，不像刚入职的时候，感觉能多学一会儿还有15元的加班费简直赚大了。现在除非是紧急的任务或者工作量很大我才会去加班，因为晚上加班的效率实在太低了，可能是因为老了，感觉晚上很难有白天那样的精力，万一写出了bug就不划算了，甚至觉得有的时候加班可以理解成白天该完成的工作没完成。所以我大多会选择周六加班，比较安静，比较自由。然而加班次数似乎也是公司绩效考核的一个标准，我也比较无奈。<br>大概2015年年底项目一期开发基本完成，二期的Report任务也挺多，但迟迟没开始，到目前一直处于一期的维护阶段，客户问题并不多，大多数时间比较清闲。我觉得code能力和健身差不多，一段时间不加强锻炼就会有所下降，就要从更基础的地方从新起步。现在几乎每天都会做一些自重的锻炼，而代码却碰的有些少了，有时候想看些新技术但又觉得没有项目参与研究的肯定不深而且容易忘，就像之前看过nodejs，也没做记录现在几乎全忘了。。。 就记得几个名词中间件还有事件驱动。<br>想想我工作这几年的学习过程，大多还是通过工作驱动的，工作时用到什么就看看什么，遇到什么问题就上网查查，总感觉有很多东西还是吃不太准，没有搜索引擎自己干起活来都费劲。所以我觉得有必要再从头把一些基础知识捋一捋，这可能是我这段时间的任务了，希望有所收获。</p>
+		<h6 id="u524D_u8A00"><a href="#u524D_u8A00" class="headerlink" title="前言"></a>前言</h6><p>由于工作分工，处理客户问题的经验很少，因为资源问题临时需要我来补这个坑。这也是我第一次查看客户dump文件，但是文件似乎有错误，这里主要介绍使用 <a href="https://www.microsoft.com/en-us/download/details.aspx?id=49924" target="_blank" rel="external">Debug Diagnostic Tool</a> 来分析和设置自动回收dump的schedule。</p>
+<h3 id="u57FA_u672C_u64CD_u4F5C"><a href="#u57FA_u672C_u64CD_u4F5C" class="headerlink" title="基本操作"></a>基本操作</h3><ol>
+<li><a href="https://developer.microsoft.com/en-us/windows/hardware/download-windbg" target="_blank" rel="external">下载地址</a></li>
+<li>设置symbol path: <code>SRV*d:/symbols/*http://msdl.microsoft.com/download/symbols</code><br>调试客户环境dump文件时，如果客户的framework文件版本和本地不同，常常需要copy3个dll文件 <strong>mscordacwks.dll, mscorwks.dll, SOS.dll</strong>,可以新建个CumstomDll文件夹，copy这3个文件，然后在symbol path后添加 <code>;D:\CustomDll</code>,或copy这3个文件到 <code>d:/symbols</code>下。  </li>
+<li>加载SOS文件 <code>.load sos</code>或者<code>.load d:\customdll\sos.dll</code>以便执行扩展命令。</li>
+</ol>
+<h3 id="u6307_u4EE4__26amp_3B__u5177_u4F53Case"><a href="#u6307_u4EE4__26amp_3B__u5177_u4F53Case" class="headerlink" title="指令  &amp; 具体Case"></a>指令  &amp; 具体Case</h3><p>参考手中 “WinDbg入门培训” 文档，没仔细研究过，就不搬别人写好的东西了。</p>
+<h3 id="Debug_Diagnostic_Tool"><a href="#Debug_Diagnostic_Tool" class="headerlink" title="Debug Diagnostic Tool"></a>Debug Diagnostic Tool</h3><p>首先可以用这个tool来分析dump文件，结果会以report形式展现，比较直观。<br>在研究时发现系统运行 <code>perfmon</code> 指令,里面出现的counter和这个tool中设置触发条件时选择的完全一样。可以用通过测试程序来测试一些counter的值。<br>对于客户说timer service占用cpu高的这个case，设置了两个自动触发的rule:  </p>
+<ol>
+<li>counter是local cumputer，选择Processor下的 %Processor Time，instances选择all，意味着监控这台机器的cpu占用率，最高值是100。 可以设置高于90时触发自动生成dump的rule。  </li>
+<li>counter是local cumputer，选择Process下的%Processor Time,instance选择具体进程，比如DocAveTimerService。需要注意的是在设置触发条件的时候要考虑cpu的数量。这个值记录的是<strong>所有cpu加一起的占用率</strong>。这个客户有两个cpu，触发值设置150相当于task manager中显示占用率高于75时触发。</li>
+</ol>
+<p>通过几张图片了解下配置过程：<br><img src="/images/WinDbg/Wdb_Process.jpg" alt=""><br><img src="/images/WinDbg/Wdb_Trigger.jpg" alt=""><br><img src="/images/WinDbg/Dump_Target.jpg" alt=""><br><img src="/images/WinDbg/Wdb_Schedule.jpg" alt=""></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/随笔/">随笔</a>
+  <span></span> <a href="/tags/WinDbg/">WinDbg</a>
   </div>
 
 
@@ -101,7 +115,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://sherlockshao.github.io/2016/04/20/essay-001/" data-title="随笔 | Coffee Time" data-tsina="null" class="share clearfix">
+  <div data-url="http://sherlockshao.github.io/2016/11/16/WinDbg/" data-title="WinDbg基本使用方法 | Coffee Time" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -110,19 +124,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/11/16/WinDbg/" title="WinDbg基本使用方法">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  WinDbg基本使用方法</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/01/12/SSRS-003/"  title="蛋疼集锦">
+<a href="/2016/04/20/essay-001/"  title="随笔">
  <strong>NEXT:</strong><br/> 
- <span>蛋疼集锦
+ <span>随笔
 </span>
 </a>
 </div>
@@ -135,7 +141,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#u89E3_u51B3_u672C_u4E3B_u9898_pacman__u4E2D_Code_u6807_u7B7E_u73B0_u5B9E_u95EE_u9898"><span class="toc-number">1.</span> <span class="toc-text">解决本主题 pacman 中 Code标签现实问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u73B0_u72B6"><span class="toc-number">2.</span> <span class="toc-text">现状</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#u524D_u8A00"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u57FA_u672C_u64CD_u4F5C"><span class="toc-number"></span> <span class="toc-text">基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#u6307_u4EE4__26amp_3B__u5177_u4F53Case"><span class="toc-number"></span> <span class="toc-text">指令  & 具体Case</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Debug_Diagnostic_Tool"><span class="toc-number"></span> <span class="toc-text">Debug Diagnostic Tool</span></a>
   </div>
 
 <div id="asidepart">
